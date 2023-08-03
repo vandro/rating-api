@@ -8,9 +8,9 @@
   "scripts": {
     "build-less": "less-cli build",
     "deploy": "less-cli deploy",
-    "pretest": "node ./script/pre-test.js && yarn",
+    "pretest": "node ./scripts/pre-test.js && yarn",
     "test": "jest",
-    "posttest": "node ./script/post-test.js && yarn"
+    "posttest": "node ./scripts/post-test.js && yarn"
   },
   "dependencies": {
     "sequelize": "^6.32.1",
