@@ -14,7 +14,14 @@ const get_by_id = async (req, res) => {
     return res;
 };
 
+const get_all = async (req, res) => {
+    const categories = await Category.findAll();
+    res.body = JSON.stringify(categories.map(category => category.get()));
+    return res;
+};
+
 module.exports = {
     post,
-    get_by_id
+    get_by_id,
+    get_all
 }

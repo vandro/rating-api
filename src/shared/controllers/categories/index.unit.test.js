@@ -4,6 +4,7 @@ const Category = require('models/Category');
 
 jest.spyOn(Category, 'create');
 jest.spyOn(Category, 'findByPk');
+jest.spyOn(Category, 'findAll');
 
 const create_category = () => ({
   name: faker.word.adjective(),
@@ -63,6 +64,44 @@ describe('Controller categories', () => {
       // Assert
       expect(JSON.parse(result.body)).toMatchObject(new_category);
       expect(Category.findByPk).toHaveBeenCalledWith(category.id);
+    });
+  });
+
+  describe('get_all', () => {
+    it('retrieve and return all categories', async () => {
+      // Prepare
+      const request_1 = {
+        req: {
+          body: JSON.stringify(create_category())
+        },
+        res: {
+          body: null
+        }
+      }
+
+      const request_2 = {
+        req: {
+          body: JSON.stringify(create_category())
+        },
+        res: {
+          body: null
+        }
+      }
+      // create a categories
+      const response = await Promise.all([
+        controller.post(request_1.req, request_1.res),
+        controller.post(request_2.req, request_2.res)
+      ]);
+
+      const categories = response.map(category => JSON.parse(category.body))
+
+      // Act
+      const result = await controller.get_all({}, { body: null });
+      
+      // Assert
+      expect(JSON.parse(result.body).length).toBe(2);
+      expect(Category.findAll).toHaveBeenCalled();
+      expect(JSON.parse(result.body)).toEqual(categories);
     });
   });
 });
