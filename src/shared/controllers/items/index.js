@@ -39,6 +39,14 @@ const post = async (req, res) => {
     return res;
 };
 
+const get_all = async (req, res) => {
+    const items = await Item.findAll();
+
+    res.body = JSON.stringify(items.map(item => item.get()));
+    return res;
+};
+
 module.exports = {
-    post
+    post,
+    get_all
 }

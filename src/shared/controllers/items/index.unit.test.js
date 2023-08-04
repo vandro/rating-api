@@ -4,6 +4,7 @@ const Item = require('models/Item');
 const Category = require('models/Category');
 
 jest.spyOn(Item, 'create');
+jest.spyOn(Item, 'findAll');
 
 const create_category = () => ({
   name: faker.word.adjective(),
@@ -212,6 +213,60 @@ describe('Controller items', () => {
         }).rejects.toThrow(expected_error);
         expect(Item.create).not.toHaveBeenCalled();
       });
+    });
+  });
+
+  describe('get_all', () => {
+    it('retrieve and return all items', async () => {
+      // Prepare
+      const mock_category_1  = create_category();
+      const category_1 = await Category.create(mock_category_1);
+
+      const request_1 = {
+        req: {
+          body: JSON.stringify(create_item(category_1))
+        },
+        res: {
+          body: null
+        }
+      }
+
+      const request_2 = {
+        req: {
+          body: JSON.stringify(create_item(category_1))
+        },
+        res: {
+          body: null
+        }
+      }
+
+      const mock_category_2  = create_category();
+      const category_2 = await Category.create(mock_category_2);
+      const request_3 = {
+        req: {
+          body: JSON.stringify(create_item(category_2))
+        },
+        res: {
+          body: null
+        }
+      }
+
+      // create a items
+      const response = await Promise.all([
+        controller.post(request_1.req, request_1.res),
+        controller.post(request_2.req, request_2.res),
+        controller.post(request_3.req, request_3.res)
+      ]);
+
+      const items = response.map(item => JSON.parse(item.body))
+
+      // Act
+      const result = await controller.get_all({}, { body: null });
+
+      // Assert
+      expect(JSON.parse(result.body).length).toBe(response.length);
+      expect(Item.findAll).toHaveBeenCalled();
+      expect(JSON.parse(result.body)).toEqual(items);
     });
   });
 });
