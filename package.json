@@ -8,14 +8,15 @@
   "scripts": {
     "build-less": "less-cli build",
     "deploy": "less-cli deploy",
-    "pretest": "node ./scripts/pre-test.js && yarn",
+    "pretest": "node ./scripts/pre-test.js && yarn && sequelize db:migrate",
     "test": "jest",
-    "posttest": "node ./scripts/post-test.js && yarn"
+    "posttest": "sequelize db:migrate:undo:all && node ./scripts/post-test.js && yarn"
   },
   "dependencies": {
     "sequelize": "^6.32.1",
     "sequelize-cli": "^6.6.1",
-    "sqlite3": "^5.1.6"
+    "sqlite3": "^5.1.6",
+    "joi": "^17.9.2"
   },
   "devDependencies": {
     "@faker-js/faker": "^8.0.2",
